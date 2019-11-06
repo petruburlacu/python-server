@@ -1,8 +1,13 @@
 from flask import Flask, jsonify, abort, make_response, request, url_for;
 from flask_httpauth import HTTPBasicAuth;
 
+import requests;
+import json;
+
 auth = HTTPBasicAuth();
 app = Flask(__name__);
+
+safe_browsing_api = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=<REDACTED>";
 
 ## Basic authentication method to be used with requests
 @auth.get_password
@@ -102,6 +107,15 @@ def delete_task(task_id):
         abort(404);
     tasks.remove(task[0]);
     return jsonify({'result': True});
+
+@app.route('/api/check', methods=['GET'])
+def get_report():
+    url_code = request.args.get('path');
+    if len(url_code) == 0:
+        abort(404);
+    app.logger.info('Generating report for: ' + url_code);
+    # Print response
+    return jsonify({'report': url_code});
 
 @app.errorhandler(404)
 def not_found(error):
