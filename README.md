@@ -9,3 +9,5 @@ Reference: https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-pyt
 - Store session tokens in a NOSQL database like Redis.
 
 Reference: https://stackoverflow.com/questions/47892413/how-to-secure-a-rest-api-on-flask
+
+Resource: https://www.diycode.cc/projects/toddmotto/public-apis
