@@ -1,13 +1,14 @@
+from __future__ import print_function
 from flask import Flask, jsonify, abort, make_response, request, url_for;
 from flask_httpauth import HTTPBasicAuth;
 
-import requests;
-import json;
+import sys
+import requests
+import json
+import socket
 
 auth = HTTPBasicAuth();
 app = Flask(__name__);
-
-safe_browsing_api = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=<REDACTED>";
 
 ## Basic authentication method to be used with requests
 @auth.get_password
@@ -108,18 +109,38 @@ def delete_task(task_id):
     tasks.remove(task[0]);
     return jsonify({'result': True});
 
-@app.route('/api/check', methods=['GET'])
-def get_report():
-    url_code = request.args.get('path');
-    if len(url_code) == 0:
-        abort(404);
-    app.logger.info('Generating report for: ' + url_code);
-    # Print response
-    return jsonify({'report': url_code});
-
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Request not found'}), 404);
+
+@app.route('/api', methods=['GET'])
+def get_report():
+    inputs = [{'url': "http://testsafebrowsing.appspot.com/s/phishing.html"}];
+    
+    valid_url = 'http://testsafebrowsing.appspot.com/s/phishing.html';
+    
+    # url_code = request.args.get('path');
+    # if len(url_code) == 0:
+    #     abort(404);
+    
+    ## Create an import functionallity to add a csv file with a list of urls to scan.
+    ## Single POST request that has list with one or multiple items.
+    print('Generating report for: ');
+    api_key = 'AIzaSyACYRvOdtNKzInQHA9cYEIFJFy_CFYJln8'
+    url = "https://safebrowsing.googleapis.com/v4/threatMatches:find"
+    payload = {'client': {'clientId': "mycompany", 'clientVersion': "0.1"},
+            'threatInfo': {'threatTypes': ["SOCIAL_ENGINEERING", "MALWARE"],
+                            'platformTypes': ["ANY_PLATFORM"],
+                            'threatEntryTypes': ["URL"],
+                            'threatEntries': [{'url': valid_url}]}}
+    params = {'key': api_key}
+    # r = requests.post(url, params=params, json=payload)
+    
+    ip_report = socket.getaddrinfo('testsafebrowsing.appspot.com', None, socket.AF_INET6)
+    print(ip_report)
+    # Print response
+    # return jsonify({'report': r.json()});
+    return jsonify({'report': 'Stefan is sad'});
 
 if __name__ == '__main__':
     app.run(debug=True);
