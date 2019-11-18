@@ -126,7 +126,7 @@ def get_report():
     ## Create an import functionallity to add a csv file with a list of urls to scan.
     ## Single POST request that has list with one or multiple items.
     print('Generating report for: ');
-    api_key = 'AIzaSyACYRvOdtNKzInQHA9cYEIFJFy_CFYJln8'
+    api_key = '############'
     url = "https://safebrowsing.googleapis.com/v4/threatMatches:find"
     payload = {'client': {'clientId': "mycompany", 'clientVersion': "0.1"},
             'threatInfo': {'threatTypes': ["SOCIAL_ENGINEERING", "MALWARE"],
